@@ -1,8 +1,12 @@
 package escola;
 
-import escola.aplicacao.aluno.matricula.MatricularAluno;
-import escola.aplicacao.aluno.matricula.MatricularAlunoDto;
-import escola.infra.aluno.RepositorioDeAlunosEmMemoria;
+import escola.academico.aplicacao.aluno.matricula.MatricularAluno;
+import escola.academico.aplicacao.aluno.matricula.MatricularAlunoDto;
+import escola.academico.dominio.aluno.LogDeAlunoMatriculado;
+import escola.academico.infra.aluno.RepositorioDeAlunosEmMemoria;
+import escola.gameficacao.aplicacao.GeraSeloAlunoNovato;
+import escola.gameficacao.infra.selo.RepositorioDeSelosEmMemoria;
+import escola.shared.dominio.evento.PublicadorDeEventos;
 
 public class MatricularAlunoPorLinhaDeComando {
 	
@@ -11,11 +15,18 @@ public class MatricularAlunoPorLinhaDeComando {
 		String cpf = "123.456.789-00";
 		String email = "fulano@email.com";
 		
-		MatricularAluno matricular = new MatricularAluno(new RepositorioDeAlunosEmMemoria());
-		matricular.executa(
-				new MatricularAlunoDto(nome, 
-						cpf, 
-						email));
+		MatricularAlunoDto dto = new MatricularAlunoDto(
+				nome, cpf, email);
+		
+		PublicadorDeEventos publicador = new PublicadorDeEventos();
+		publicador.adicionar(new LogDeAlunoMatriculado());
+		publicador.adicionar(new GeraSeloAlunoNovato(
+				new RepositorioDeSelosEmMemoria()));
+		
+		MatricularAluno matricular = new MatricularAluno(
+				new RepositorioDeAlunosEmMemoria(), publicador);
+		
+		matricular.executa(dto);
 	}
 
 }

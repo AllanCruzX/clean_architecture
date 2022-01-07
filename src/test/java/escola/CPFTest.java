@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import escola.dominio.aluno.CPF;
+import escola.shared.dominio.CPF;
 
 class CPFTest {
 
